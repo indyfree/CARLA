@@ -11,23 +11,7 @@ def test_properties():
     data_catalog = "adult_catalog.yaml"
     data = DataCatalog(data_name, data_catalog)
 
-    feature_input_order = [
-        "age",
-        "fnlwgt",
-        "education-num",
-        "capital-gain",
-        "capital-loss",
-        "hours-per-week",
-        "workclass_Private",
-        "marital-status_Non-Married",
-        "occupation_Other",
-        "relationship_Non-Husband",
-        "race_White",
-        "sex_Male",
-        "native-country_US",
-    ]
-
-    model_tf_adult = MLModelCatalog(data, "ann", feature_input_order)
+    model_tf_adult = MLModelCatalog(data, "ann")
 
     exp_backend_tf = "tensorflow"
     exp_feature_order_adult = [
@@ -55,28 +39,12 @@ def test_predictions_tf():
     data_catalog = "adult_catalog.yaml"
     data = DataCatalog(data_name, data_catalog)
 
-    feature_input_order = [
-        "age",
-        "fnlwgt",
-        "education-num",
-        "capital-gain",
-        "capital-loss",
-        "hours-per-week",
-        "workclass_Private",
-        "marital-status_Non-Married",
-        "occupation_Other",
-        "relationship_Non-Husband",
-        "race_White",
-        "sex_Male",
-        "native-country_US",
-    ]
-
-    model_tf_adult = MLModelCatalog(data, "ann", feature_input_order)
+    model_tf_adult = MLModelCatalog(data, "ann")
 
     # normalize and encode data
     norm_enc_data = scale(model_tf_adult.scaler, data.continous, data.raw)
     norm_enc_data = encode(model_tf_adult.encoder, data.categoricals, norm_enc_data)
-    norm_enc_data = norm_enc_data[feature_input_order]
+    norm_enc_data = norm_enc_data[model_tf_adult.feature_input_order]
 
     single_sample = norm_enc_data.iloc[22]
     single_sample = single_sample[model_tf_adult.feature_input_order].values.reshape(
@@ -109,23 +77,7 @@ def test_predictions_with_pipeline():
     data_catalog = "adult_catalog.yaml"
     data = DataCatalog(data_name, data_catalog)
 
-    feature_input_order = [
-        "age",
-        "fnlwgt",
-        "education-num",
-        "capital-gain",
-        "capital-loss",
-        "hours-per-week",
-        "workclass_Private",
-        "marital-status_Non-Married",
-        "occupation_Other",
-        "relationship_Non-Husband",
-        "race_White",
-        "sex_Male",
-        "native-country_US",
-    ]
-
-    model_tf_adult = MLModelCatalog(data, "ann", feature_input_order)
+    model_tf_adult = MLModelCatalog(data, "ann")
     model_tf_adult.use_pipeline = True
 
     single_sample = data.raw.iloc[22].to_frame().T
@@ -155,23 +107,7 @@ def test_pipeline():
     data_catalog = "adult_catalog.yaml"
     data = DataCatalog(data_name, data_catalog)
 
-    feature_input_order = [
-        "age",
-        "fnlwgt",
-        "education-num",
-        "capital-gain",
-        "capital-loss",
-        "hours-per-week",
-        "workclass_Private",
-        "marital-status_Non-Married",
-        "occupation_Other",
-        "relationship_Non-Husband",
-        "race_White",
-        "sex_Male",
-        "native-country_US",
-    ]
-
-    model = MLModelCatalog(data, "ann", feature_input_order, use_pipeline=True)
+    model = MLModelCatalog(data, "ann", use_pipeline=True)
 
     samples = data.raw.iloc[0:22]
 
@@ -188,30 +124,8 @@ def test_predictions_pt():
     data_name = "adult"
     data_catalog = "adult_catalog.yaml"
     data = DataCatalog(data_name, data_catalog)
-
-    feature_input_order = [
-        "age",
-        "fnlwgt",
-        "education-num",
-        "capital-gain",
-        "capital-loss",
-        "hours-per-week",
-        "sex_Female",
-        "sex_Male",
-        "workclass_Non-Private",
-        "workclass_Private",
-        "marital-status_Married",
-        "marital-status_Non-Married",
-        "occupation_Managerial-Specialist",
-        "occupation_Other",
-        "relationship_Husband",
-        "relationship_Non-Husband",
-        "race_Non-White",
-        "race_White",
-        "native-country_Non-US",
-        "native-country_US",
-    ]
-    model = MLModelCatalog(data, "ann", feature_input_order, backend="pytorch")
+    model = MLModelCatalog(data, "ann", backend="pytorch")
+    feature_input_order = model.feature_input_order
 
     # normalize and encode data
     norm_enc_data = scale(model.scaler, data.continous, data.raw)
